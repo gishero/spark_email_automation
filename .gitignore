@@ -1,0 +1,9 @@
+__pycache__
+.vscode
+venv
+credentials.json
+Spark_Logo.jpg
+StudentApplication.csv
+token_gmail_v1.pickle
+token.json
+token.pickle
