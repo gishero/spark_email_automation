@@ -77,7 +77,7 @@ def add_attachment(message, filename):
 
 def build_message(destination, obj, body, attachments=[]):
     if not attachments:  # no attachments given
-        message = MIMEText(body)
+        message = MIMEText(body, "html")
         message["to"] = destination
         message["from"] = our_email
         message["subject"] = obj
@@ -86,7 +86,7 @@ def build_message(destination, obj, body, attachments=[]):
         message["to"] = destination
         message["from"] = our_email
         message["subject"] = obj
-        message.attach(MIMEText(body))
+        message.attach(MIMEText(body, "html"))
         for filename in attachments:
             add_attachment(message, filename)
     return {"raw": urlsafe_b64encode(message.as_bytes()).decode()}
@@ -102,6 +102,7 @@ def send_message(service, destination, obj, body, attachments=[]):
     return debug
 
 
+# function to get the emails from the student applications csv
 def get_emails():
     df = pd.read_csv("StudentApplication.csv", encoding="mac_roman")
     print(df.columns)
@@ -111,15 +112,17 @@ def get_emails():
 # get signature
 with open("signature.txt", "r") as file:
     signature = file.read().replace("\n", "")
+ESignature = {"signature": signature}
 
 # test send email
 destination_email = "gishan.eroshan@gmail.com"
 subject = "Test Email from Gmail API"
-message = "This is a test email from the gmail api.\n\nJust to figure out the formatting differences.\n\nKind regards,"
-attachments = ["Spark_Logo.jpg", "signature.png"]
-service.users().settings().sendas
+message = "<p>This is a test email from the gmail api.<br><br>Just to figure out the formatting differences.<br><br>Kind regards,<br></p>"
+attachments = []
 
-# call function to send email
-debug = send_message(service, destination_email, subject, message, attachments)
 
-# print(debug)
+debug = send_message(
+    service, destination_email, subject, message + signature, attachments
+)
+
+print(debug)
